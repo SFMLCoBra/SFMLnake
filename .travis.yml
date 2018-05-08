@@ -3,27 +3,29 @@ language: cpp
 dist: trusty
 sudo: required
 
-# Linux Sonarcloud build (for code analysis)
-compiler: gcc
-addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:lkoppel/opencv'
-        packages:
-            - g++-4.9
-            - libusb-1.0-0-dev
-            - libopencv-dev
-        sonarcloud:
-          organization: "pawelworwa-githu
-          token: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa
-    env:
-         - BUILD_NAME="linux-sonar-analysis"
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-    script:
-        - build-wrapper-linux-x86-64 --out-dir bw-output make -j2
-        - cd ..
-        - sonar-scanner
-    cache:
-        directories:
-          - '$HOME/.sonar/cache'
+matrix:
+  include:
+    - os: linux
+        compiler: gcc
+        addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - sourceline: 'ppa:lkoppel/opencv'
+                packages:
+                    - g++-4.9
+                    - libusb-1.0-0-dev
+                    - libopencv-dev
+                sonarcloud:
+                  organization: "pawelworwa-githu
+                  token: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa
+            env:
+                 - BUILD_NAME="linux-sonar-analysis"
+                 - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+            script:
+                - build-wrapper-linux-x86-64 --out-dir bw-output make -j2
+                - cd ..
+                - sonar-scanner
+            cache:
+                directories:
+                  - '$HOME/.sonar/cache'
