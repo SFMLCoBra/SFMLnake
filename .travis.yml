@@ -3,94 +3,20 @@ language: cpp
 sudo: false
 dist: trusty
 
-before_install:
-  - echo "${BUILD_NAME}"
-  - eval "${MATRIX_EVAL}"
+ before_script:
+  - wget https://www.sfml-dev.org/files/SFML-2.4.2-linux-gcc-64-bit.tar.gz -O /tmp/sfml.tar.gz
+  - tar -xjvf /tmp/sfml.tar.gz
+  - sudo cp -r SFML-2.4.2/* /usr/
+  - sudo apt-get install -y libjpeg62-dev libsndfile1-dev libglew1.5 libglew1.5-dev libfreetype6 libjpeg-turbo8 libjpeg8 libopenal-data libopenal1  libxrandr2 libxrender1 libsoil1 
 
-before_script:
-  - mkdir build
-  - cd build
-  - cmake -DENABLE_SERIALDEV=0 -DENABLE_OPENCV=1 ..
-
-script:
-  - make -j2
-
+script: make
+  
 matrix:
   include:
-    # Linux-GCC builds
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:lkoppel/opencv'
-          packages:
-            - g++-4.9
-            - libusb-1.0-0-dev
-            - libopencv-dev
-      env:
-         - BUILD_NAME="linux-gcc-4.9"
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:lkoppel/opencv'
-          packages:
-            - g++-6
-            - libusb-1.0-0-dev
-            - libopencv-dev
-      env:
-         - BUILD_NAME="linux-gcc-6"
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    # Linux-Clang builds
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:lkoppel/opencv'
-            - llvm-toolchain-precise-3.6
-          packages:
-            - clang-3.6
-            - libusb-1.0-0-dev
-            - libopencv-dev
-      env:
-        - BUILD_NAME="linux-clang-3.6"
-        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - sourceline: 'ppa:lkoppel/opencv'
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - clang-4.0
-            - libusb-1.0-0-dev
-            - libopencv-dev
-      env:
-        - BUILD_NAME="linux-clang-4.0"
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-
     # Linux Sonarcloud build (for code analysis)
     - os: linux
       compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'ppa:lkoppel/opencv'
-          packages:
-            - g++-4.9
-            - libusb-1.0-0-dev
-            - libopencv-dev
-        sonarcloud:
+      sonarcloud:
              organization: "pawelworwa-github"
              token: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa"
       env:
