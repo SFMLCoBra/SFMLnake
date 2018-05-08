@@ -1,31 +1,28 @@
 language: cpp
 
-sudo: false
 dist: trusty
+sudo: required
 
- before_script:
+compiler:
+  - gcc
+
+before_script:
   - wget https://www.sfml-dev.org/files/SFML-2.4.2-linux-gcc-64-bit.tar.gz -O /tmp/sfml.tar.gz
-  - tar -xjvf /tmp/sfml.tar.gz
-  - sudo cp -r dependencies/SFML* /usr/
+  - tar -xjvf /tmp/sfml.tar.bz2
+  - sudo cp -r dependencies/SFML/* /usr/
   - sudo apt-get install -y libjpeg62-dev libsndfile1-dev libglew1.5 libglew1.5-dev libfreetype6 libjpeg-turbo8 libjpeg8 libopenal-data libopenal1  libxrandr2 libxrender1 libsoil1 
 
-script: make
-  
-matrix:
-  include:
-    # Linux Sonarcloud build (for code analysis)
-    - os: linux
-      compiler: gcc
-      sonarcloud:
-             organization: "pawelworwa-github"
-             token: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa"
-      env:
-         - BUILD_NAME="linux-sonar-analysis"
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-      script:
-        - build-wrapper-linux-x86-64 --out-dir bw-output make -j2
-        - cd ..
-        - sonar-scanner
-      cache:
-        directories:
-          - '$HOME/.sonar/cache'
+
+addons:
+  sonarcloud:
+    organization: "pawelworwa-github"
+    token:
+      secure: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa"
+script:
+  - make
+  - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - sonar-scanner
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+      
