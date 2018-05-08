@@ -1,0 +1,14 @@
+dist: trusty
+sudo: required
+
+addons:
+  sonarcloud:
+    organization: "pawelworwa-github"
+    token:
+      secure: "89a5ecb69279328a0c52f2ec9d3416b2a53c65aa"
+script:
+  - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - sonar-scanner
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
